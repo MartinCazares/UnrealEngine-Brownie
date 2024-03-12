@@ -47,7 +47,7 @@ This capability allows you to fetch continuous updates of the actual Location of
     void BrownieThunkCpp_StopGettingLocationUpdates()
 **New Location Received**
 
-*This method gets executed every single time the device tells us that a new Location point has been found, you will stop receiving this updates until the "stop" method is invoked.*
+*This method gets executed every single time the device tells us that a new Location point has been found, you will stop receiving these updates until the "stop" method is invoked.*
 
     void UYourComponent::onLocationUpdate(float latitude, float longitude, float accuracy, FString provider, bool isFromLastKnownLocation)
 
