@@ -228,7 +228,7 @@ First make sure to register for the result of the screenshot broadcast.
         browniePubsub->onTakeScreenshotFinished.AddUObject(this, &UYourComponent::onTakeScreenshotFinished);
         //...
         //...
-        //This function will be called when the screenshot saving is done process is done and will let us know the whole internal path where the device was saved.
+        //This function will be called when the screenshot saving process is done and will let us know the whole internal path where the device was saved.
         void UYourComponent::onTakeScreenshotFinished(FString screenshotPath) { }
 
 Now that we are ready to listen for the result of the screenshot that will provide the internal file path, let's take a picture:
