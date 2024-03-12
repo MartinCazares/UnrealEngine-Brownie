@@ -53,7 +53,7 @@ This capability allows you to fetch continuous updates of the actual Location of
 
 **Location Permission Granted**
 
-*This method gets executed only if the permission has been granted by the user.*
+*This method gets executed only if the permission has been explicitly granted by the user, following calls for the action will not trigger this event, the action will be taken directly(requires registering to the event first).*
 
     void UYourComponent::onLocationPermissionGranted(bool granted)
 
