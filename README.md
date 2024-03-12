@@ -13,7 +13,8 @@ Note: If there's any other actions you would like to be added, let me know. (cre
 
 All these Capabilities can be Enabled/Disabled on Unreal Engine's Editor, just go to Edit -> Project Settings -> Plugins -> Brownie.
 
-![image](https://github.com/MartinCazares/Brownie-UE-Plugin-Internal/assets/8989676/7e4aed85-f1d7-4c3b-97fe-b43c47ea6235)
+
+![PluginSettingsScreen](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/0e3a7025-e519-4dec-b981-6cb3e7461526)
 
 
 
@@ -235,7 +236,7 @@ Now that we are ready to listen for the result of the screenshot that will provi
 
 The previous code can be invoked from anywhere and it will capture the whole surface as is. The file will be stored in the internal directory of the app and can be used for any purposes. The image below shows an example of the image captured and the place where the file lives in the device (notice the name of the file as well as the full path).
 
-![image](https://github.com/MartinCazares/Brownie-UE-Plugin-Internal/assets/8989676/f4594406-ee89-4d85-b614-e0855ba436a8)
+![Screenshot-Example](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/d3e67155-4158-49df-81ef-fafd5924af45)
 
 # Open Web
 This capability launches a WebView and loads it with the url that you specify.
