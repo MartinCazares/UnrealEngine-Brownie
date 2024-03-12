@@ -13,7 +13,7 @@ Brownie is an Unreal Engine Plugin that works as a Bridge between two different 
  - **Android Settings** (show the default settings screen on the device or redirect to specific settings (e.g WiFi/Location/Date and Time/etc))
  - **Phone Call** (bring the Dialer with a predefined phone number ready to start the call)
 
-Note: If there's any other actions you would like to be added, let me know. (create an issue with the request)
+**Note:** If there's any other actions you would like to be added, let me know. (create an issue with the request)
 
 All these Capabilities can be Enabled/Disabled on Unreal Engine's Editor, just go to Edit -> Project Settings -> Plugins -> Brownie.
 
