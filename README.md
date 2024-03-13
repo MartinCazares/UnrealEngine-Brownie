@@ -2,6 +2,8 @@
 
 Brownie is an Unreal Engine Plugin that works as a Bridge between two different worlds. With this plugin you can easily take actions on Android's Ecosystem from Unreal's C++.
 
+(For sample project help, go to the end of this document)
+
 # Actions
 
  - **Location Services** (Latitude/Longitude/Accuracy/etc)
@@ -352,6 +354,14 @@ Just with the code above we can start a phone call.
     FBrownieOnTakeScreenshotFinished onTakeScreenshotFinished;
     FBrownieOnTextToSpeechInitFinished onTextToSpeechInitFinished;
     FBrowniePhoneCallPermissionGranted onPhoneCallPermissionGranted;
+
+
+
+# Example Project
+In order to get the sample project to work, create a new sample TopDownMap project and Copy the Folders (Character, LevelPrototyping and TopDown) from the Content Folder.
+Then just paste them in this projects content folder, go to "BrowniePluginTesting.uproject" and create the solution.
+
+
 
 
 
