@@ -358,7 +358,7 @@ Just with the code above we can start a phone call.
 
 
 # Example Project
-In order to get the sample project to work, create a new sample TopDownMap project and Copy the Folders (Character, LevelPrototyping and TopDown) from the Content Folder.
+In order to get the sample project to work, create a new sample TopDownMap project and Copy the Folders (Character, LevelPrototyping, StarterContent and TopDown) from the Content Folder.
 Then just paste them in this projects content folder, go to "BrowniePluginTesting.uproject" and create the solution.
 
 
