@@ -303,6 +303,8 @@ Now in order to read the preferences stored you can use the following examples a
     extern bool BrownieThunkCpp_GetEncryptedBool(FString preferencesCollectionName, FString preferenceKey);
     bool boolVal = BrownieThunkCpp_GetEncryptedBool(prefFileName, FString(TEXT("enabled")));
 
+![image](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/dff84c72-963a-47d0-8712-219a79762803)
+
 # Screenshots
 This capability allows you to take screenshots of the Game, anything displayed in the screen will be captured after the method is invoked.
 
