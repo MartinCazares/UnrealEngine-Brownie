@@ -52,6 +52,9 @@ public:
 	UFUNCTION()
 	void onPhoneCallClicked();
 
+	UFUNCTION()
+	void onEncryptedPrefClicked();
+
 	void onPhoneCallPermissionGranted(bool granted);
 
 	void onLocationUpdate(float latitude, float longitude, float accuracy, FString provider, bool isFromLastKnownLocation);
@@ -106,5 +109,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UButton* PhoneCallBtn;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UButton* EncryptedPrefs;
 	
 };

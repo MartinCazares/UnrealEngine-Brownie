@@ -15,6 +15,7 @@ void UControlsUserWidget::NativeConstruct() {
 	InAppReviewBtn->OnClicked.AddDynamic(this, &UControlsUserWidget::onInAppReviewClicked);
 	OpenSettingsBtn->OnClicked.AddDynamic(this, &UControlsUserWidget::onOpenSettingsClicked);
 	PhoneCallBtn->OnClicked.AddDynamic(this, &UControlsUserWidget::onPhoneCallClicked);
+	EncryptedPrefs->OnClicked.AddDynamic(this, &UControlsUserWidget::onEncryptedPrefClicked);
 
 	BrowniePubsub* browniePubsub = BrowniePubsub::getInstance();
 	browniePubsub->onLocationUpdate.AddUObject(this, &UControlsUserWidget::onLocationUpdate);
@@ -143,6 +144,48 @@ void UControlsUserWidget::onPhoneCallClicked() {
 #if PLATFORM_ANDROID
 	extern void BrownieThunkCpp_StartPhoneCall(FString phoneNumber);
 	BrownieThunkCpp_StartPhoneCall(phoneNumber);
+#endif	
+
+}
+
+void UControlsUserWidget::onEncryptedPrefClicked() {
+
+#if PLATFORM_ANDROID
+	FString prefFileName = FString(TEXT("fake_user_profile"));
+
+	// ===================================== PUTS =====================================
+	extern void BrownieThunkCpp_PutEncryptedString(FString preferencesCollectionName, FString preferenceKey, FString preferenceValue);
+	BrownieThunkCpp_PutEncryptedString(prefFileName, FString(TEXT("displayName")), FString(TEXT("Wizzvy!")));
+
+	extern void BrownieThunkCpp_PutEncryptedInt(FString preferencesCollectionName, FString preferenceKey, int32 preferenceValue);
+	BrownieThunkCpp_PutEncryptedInt(prefFileName, FString(TEXT("age")), (int32) 123);
+
+	extern void BrownieThunkCpp_PutEncryptedLong(FString preferencesCollectionName, FString preferenceKey, long preferenceValue);
+	BrownieThunkCpp_PutEncryptedLong(prefFileName, FString(TEXT("timestamp")), (long) 12387234687236);
+
+	extern void BrownieThunkCpp_PutEncryptedFloat(FString preferencesCollectionName, FString preferenceKey, float preferenceValue);
+	BrownieThunkCpp_PutEncryptedFloat(prefFileName, FString(TEXT("ratio")), 1.23456f);
+
+	extern void BrownieThunkCpp_PutEncryptedBool(FString preferencesCollectionName, FString preferenceKey, bool preferenceValue);
+	BrownieThunkCpp_PutEncryptedBool(prefFileName, FString(TEXT("enabled")), true);
+
+	//===================================== GETS =====================================
+	extern FString BrownieThunkCpp_GetEncryptedString(FString preferencesCollectionName, FString preferenceKey);
+	FString stringVal = BrownieThunkCpp_GetEncryptedString(prefFileName, FString(TEXT("displayName")));
+
+	extern int32 BrownieThunkCpp_GetEncryptedInt(FString preferencesCollectionName, FString preferenceKey);
+	int32 intVal = BrownieThunkCpp_GetEncryptedInt(prefFileName, FString(TEXT("age")));
+
+	extern long BrownieThunkCpp_GetEncryptedLong(FString preferencesCollectionName, FString preferenceKey);
+	long longVal = BrownieThunkCpp_GetEncryptedLong(prefFileName, FString(TEXT("timestamp")));
+
+	extern float BrownieThunkCpp_GetEncryptedFloat(FString preferencesCollectionName, FString preferenceKey);
+	float floatVal = BrownieThunkCpp_GetEncryptedFloat(prefFileName, FString(TEXT("ratio")));
+
+	extern bool BrownieThunkCpp_GetEncryptedBool(FString preferencesCollectionName, FString preferenceKey);
+	bool boolVal = BrownieThunkCpp_GetEncryptedBool(prefFileName, FString(TEXT("enabled")));
+
+	OutputTxt->SetText(FText::FromString(FString::Printf(TEXT("Prefs - str: %s, int: %d, long: %ld, float: %f, bool: %d"), *stringVal, intVal, longVal, floatVal, boolVal)));
 #endif	
 
 }
