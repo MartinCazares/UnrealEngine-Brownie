@@ -10,6 +10,7 @@ Brownie is an Unreal Engine Plugin that works as a Bridge between two different 
  - **In App Review** (start the Reviewing Flow seamlessly)
  - **Show Toasts Messages**
  - **Text To Speech** (pass an FString and convert it to voice)
+ - **Encrypted Shared Preferences**
  - **Screenshots** (whatever Unreal Engine is showing we can capture it)
  - **Open WebView** (launch an Internal Web Browser with any URL you want)
  - **Android Settings** (show the default settings screen on the device or redirect to specific settings (e.g WiFi/Location/Date and Time/etc))
@@ -198,6 +199,109 @@ If the services is successfully initialized (as it should for any common Android
     	extern void BrownieThunkCpp_TextToSpeech(FString message);
     	BrownieThunkCpp_TextToSpeech(textToSpeechMessage);
     #endif	
+
+# Encrypted Shared Preferences
+This capability allows you to store securely information that needs to be stored in the persistence layer. It works exactly the same way as normal Shared Preferences with the only difference that the values and keys within the file created internally in the device are encrypted.
+
+## Documentation
+**Store "String/Int/Long/Float/Bool"**
+
+    /**
+     params:
+     - preferencesCollectionName (e.g: user_profile)
+     - preferenceKey (e.g: displayName)
+     - preferenceValue (e.g: Wizzvy)
+     
+     Note: Based on the example values above, this method would store an encrypted
+     "key" -displayName with the "value" - Wizzvy on a preferences file named
+     "user_profile". This very same file can be used for many other keys if
+     necessary, it is a good practice to gather similar key/values under the
+     same file, but you can create new files if required.
+    
+     IMPORTANT: Only the very first time invoking an encrypted preference it could take
+     around 150ms to create the Ciphers/Encrypting mechanisms, this must be
+     taken into account, if possible use it off the main thread...
+     */
+     
+    void BrownieThunkCpp_PutEncryptedString(FString preferencesCollectionName, FString preferenceKey, FString preferenceValue)
+    
+    void BrownieThunkCpp_PutEncryptedInt(FString preferencesCollectionName, FString preferenceKey, int32 preferenceValue)
+    
+    void BrownieThunkCpp_PutEncryptedLong(FString preferencesCollectionName, FString preferenceKey, long preferenceValue)
+    
+    void BrownieThunkCpp_PutEncryptedFloat(FString preferencesCollectionName, FString preferenceKey, float preferenceValue)
+    
+    void BrownieThunkCpp_PutEncryptedBool(FString preferencesCollectionName, FString preferenceKey, bool preferenceValue)
+
+**Get "String/Int/Long/Float/Bool"**
+
+    /**
+     params:
+     - preferencesCollectionName (e.g: user_profile)
+     - preferenceKey (e.g: displayName)
+     Note: Based on the example values, this method would return the encrypted
+     "value" from the "preferenceKey" on a preferences file named
+     "user_profile".
+    
+     return:
+     - Encrypted Value previously stored in device or (false/0/"") if non-exists
+    
+     Note: Only the very first time invoking an encrypted preference it could take
+     around 150ms to create the Ciphers/Encrypting mechanisms, this must be taken
+     into account, if possible use it off the main thread...
+     */
+     
+    FString BrownieThunkCpp_GetEncryptedString(FString preferencesCollectionName, FString preferenceKey)
+    
+    int32 BrownieThunkCpp_GetEncryptedInt(FString preferencesCollectionName, FString preferenceKey)
+    
+    long BrownieThunkCpp_GetEncryptedLong(FString preferencesCollectionName, FString preferenceKey)
+    
+    float BrownieThunkCpp_GetEncryptedFloat(FString preferencesCollectionName, FString preferenceKey)
+    
+    bool BrownieThunkCpp_GetEncryptedBool(FString preferencesCollectionName, FString preferenceKey)
+
+## Example - How to use it
+
+After enabling the capability in Brownie's Plugin Settings screen, you can use one of the following examples to start saving encrypted prefs:
+
+    FString prefFileName = FString(TEXT("fake_user_profile")); //will create a fake_user_profile.xml file
+    
+    // ===================================== STORE =====================================
+    extern void BrownieThunkCpp_PutEncryptedString(FString preferencesCollectionName, FString preferenceKey, FString preferenceValue);
+    BrownieThunkCpp_PutEncryptedString(prefFileName, FString(TEXT("displayName")), FString(TEXT("Wizzvy!")));
+    
+    extern void BrownieThunkCpp_PutEncryptedInt(FString preferencesCollectionName, FString preferenceKey, int32 preferenceValue);
+    BrownieThunkCpp_PutEncryptedInt(prefFileName, FString(TEXT("age")), (int32) 123);
+    
+    extern void BrownieThunkCpp_PutEncryptedLong(FString preferencesCollectionName, FString preferenceKey, long preferenceValue);
+    BrownieThunkCpp_PutEncryptedLong(prefFileName, FString(TEXT("timestamp")), (long) 12387234687236);
+    
+    extern void BrownieThunkCpp_PutEncryptedFloat(FString preferencesCollectionName, FString preferenceKey, float preferenceValue);
+    BrownieThunkCpp_PutEncryptedFloat(prefFileName, FString(TEXT("ratio")), 1.23456f);
+    
+    extern void BrownieThunkCpp_PutEncryptedBool(FString preferencesCollectionName, FString preferenceKey, bool preferenceValue);
+    BrownieThunkCpp_PutEncryptedBool(prefFileName, FString(TEXT("enabled")), true);
+
+Now in order to read the preferences stored you can use the following examples as a guide:
+
+    FString prefFileName = FString(TEXT("fake_user_profile")); //will try to read the fake_user_profile.xml file
+    
+    // ===================================== READ =====================================
+    extern FString BrownieThunkCpp_GetEncryptedString(FString preferencesCollectionName, FString preferenceKey);
+    FString stringVal = BrownieThunkCpp_GetEncryptedString(prefFileName, FString(TEXT("displayName")));
+    
+    extern int32 BrownieThunkCpp_GetEncryptedInt(FString preferencesCollectionName, FString preferenceKey);
+    int32 intVal = BrownieThunkCpp_GetEncryptedInt(prefFileName, FString(TEXT("age")));
+    
+    extern long BrownieThunkCpp_GetEncryptedLong(FString preferencesCollectionName, FString preferenceKey);
+    long longVal = BrownieThunkCpp_GetEncryptedLong(prefFileName, FString(TEXT("timestamp")));
+    
+    extern float BrownieThunkCpp_GetEncryptedFloat(FString preferencesCollectionName, FString preferenceKey);
+    float floatVal = BrownieThunkCpp_GetEncryptedFloat(prefFileName, FString(TEXT("ratio")));
+    
+    extern bool BrownieThunkCpp_GetEncryptedBool(FString preferencesCollectionName, FString preferenceKey);
+    bool boolVal = BrownieThunkCpp_GetEncryptedBool(prefFileName, FString(TEXT("enabled")));
 
 # Screenshots
 This capability allows you to take screenshots of the Game, anything displayed in the screen will be captured after the method is invoked.
