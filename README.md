@@ -20,9 +20,7 @@ Brownie is an Unreal Engine Plugin that works as a Bridge between two different 
 
 All these Capabilities can be Enabled/Disabled on Unreal Engine's Editor, just go to Edit -> Project Settings -> Plugins -> Brownie.
 
-
-![PluginSettingsScreen](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/0e3a7025-e519-4dec-b981-6cb3e7461526)
-
+![image](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/989abcca-e700-46e1-a5f8-f61c8da33530)
 
 
 After you have added the plugin, please make sure that you have the following line in your {ProjectName}.Build.cs:
