@@ -2,12 +2,21 @@
 
 Brownie is an Unreal Engine Plugin that works as a Bridge between two different worlds. With this plugin you can easily take actions on Android's Ecosystem from Unreal's C++.
 
+# Release Notes
+
+**(NEW) - v1.1.0** (Added Biometrics / Text Sharing / Immediate In App updates)
+
+**v1.0.5** (Added Encrypted Shared Preferences / Added user cancelled permission event)
+**v1.0.1** (First release with Location Services / InAppReview / Toasts / WebViews / etc.)
+
 (For sample project help, go to the end of this document)
 
 # Actions
 
  - **Location Services** (Latitude/Longitude/Accuracy/etc)
  - **In App Review** (start the Reviewing Flow seamlessly)
+ - **Biometrics Verification** (Fingerprint or Pin validation)
+ - **In App Updates** (trigger the flow to update the app, from within the app itself...)
  - **Show Toasts Messages**
  - **Text To Speech** (pass an FString and convert it to voice)
  - **Encrypted Shared Preferences**
@@ -15,12 +24,17 @@ Brownie is an Unreal Engine Plugin that works as a Bridge between two different 
  - **Open WebView** (launch an Internal Web Browser with any URL you want)
  - **Android Settings** (show the default settings screen on the device or redirect to specific settings (e.g WiFi/Location/Date and Time/etc))
  - **Phone Call** (bring the Dialer with a predefined phone number ready to start the call)
+ - **Share Text** (any text in your game can be shared with any of the elegible apps (e.g Email, Clipboard, Whatsapp, etc))
 
 **Note:** If there's any other actions you would like to be added, let me know. (create an issue with the request)
 
 All these Capabilities can be Enabled/Disabled on Unreal Engine's Editor, just go to Edit -> Project Settings -> Plugins -> Brownie.
 
-![image](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/989abcca-e700-46e1-a5f8-f61c8da33530)
+![PluginEnabledCapabilities](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/44816051-c730-4ff5-b01d-8c8fc4dd2de8)
+
+
+![ViewPortScreen](https://github.com/MartinCazares/UnrealEngine-Brownie/assets/8989676/4fecf787-25d7-45b2-af5f-606127ec87f3)
+
 
 
 After you have added the plugin, please make sure that you have the following line in your {ProjectName}.Build.cs:
@@ -54,7 +68,7 @@ This capability allows you to fetch continuous updates of the actual Location of
 
 **Location Permission Granted**
 
-*This method gets executed only if the permission has been explicitly granted by the user, following calls for the action will not trigger this event, the action will be taken directly(requires registering to the event first).*
+*This method lets you know whther if the permission was granted by the user or not, if granted, following calls for the action will not trigger this event, the action will be taken directly(requires registering to the event first).*
 
     void UYourComponent::onLocationPermissionGranted(bool granted)
 
@@ -105,6 +119,331 @@ After enabling the capability in Brownie's Plugin Settings screen, all you need 
     	BrownieThunkCpp_InAppReview();
     #endif	
 As simple as that, just add that code in a clicked UFUNCTION or anywhere you want the flow to start and that's it.
+
+# Biometrics
+This capability allows you to bring the Fingerprint / Face Recognition or Security Pin popup in order to verify that only authorized owners of the device can take specific actions.
+
+## Documentation
+**Popup the Verification Screen**
+
+    /**
+    * 
+    * Params:
+    *	- Title (this is the title that will show up in the verification popup)
+    *	- Subtitle (this is the subtitle that will show up in the verification popup)
+    * 
+    */
+    void BrownieThunkCpp_StartBiometrics(FString title, FString subtitle)
+
+**Register for Biometric Success Events**
+
+*This method gets executed only if the user successfully authenticated with any of the available biometric options*
+
+    void UYourComponent::onBiometricsSuccessResult(int result) 
+
+*These are the possible results that the biometrics might return:*
+
+    /**
+     * Authentication type reported when the user authenticated via
+     * an unknown method.
+     *
+     * <p>This value may be returned on older Android versions due to partial incompatibility
+     * with a newer API. It does NOT necessarily imply that the user authenticated with a method
+     * other than those represented by {@link #AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL} and
+     * {@link #AUTHENTICATION_RESULT_TYPE_BIOMETRIC}.
+     *
+     *
+     * AUTHENTICATION_RESULT_TYPE_UNKNOWN = -1;
+     *
+     */
+
+    /**
+     * Authentication type reported when the user authenticated by
+     * entering their device PIN, pattern, or password.
+     *
+     *
+     * AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL = 1;
+     *
+     */
+
+    /**
+     * Authentication type reported when the user authenticated by
+     * presenting some form of biometric (e.g. fingerprint or face).
+     *
+     *
+     * AUTHENTICATION_RESULT_TYPE_BIOMETRIC = 2;
+     *
+     */
+
+**Register for Biometric Failed Events**
+
+*This method gets executed based on the actions taken by the user or the current device's limitations*
+
+    void UYourComponent::onBiometricsErrorResult(int errorCode) 
+
+*These are the possible errorCodes that the biometrics might return:*
+
+    /**
+     * Unable to determine whether the user can authenticate.
+     *
+     * <p>This status code may be returned on older Android versions due to partial incompatibility
+     * with a newer API. Applications that wish to enable biometric authentication on affected
+     * devices may still call {@code BiometricPrompt#authenticate()} after receiving this status
+     * code but should be prepared to handle possible errors.
+     * 
+     *
+     ERROR_BIOMETRIC_STATUS_UNKNOWN = -1;
+     * 
+     */
+
+    /**
+     * The user can't authenticate because the specified options are incompatible with the current
+     * Android version.
+     * 
+     *
+     ERROR_BIOMETRIC_ERROR_UNSUPPORTED = -2;
+     * 
+     */
+
+    /**
+     * The hardware is unavailable. Try again later.
+     * 
+     *
+     ERROR_HW_UNAVAILABLE = 1;
+     * 
+     */
+
+    /**
+     * The sensor was unable to process the current image.
+     * 
+     *
+     ERROR_UNABLE_TO_PROCESS = 2;
+     * 
+     */
+
+    /**
+     * The current operation has been running too long and has timed out.
+     *
+     * <p>This is intended to prevent programs from waiting for the biometric sensor indefinitely.
+     * The timeout is platform and sensor-specific, but is generally on the order of ~30 seconds.
+     * 
+     *
+     ERROR_TIMEOUT = 3;
+     * 
+     */
+
+    /**
+     * The operation can't be completed because there is not enough device storage remaining.
+     * 
+     *
+     ERROR_NO_SPACE = 4;
+     * 
+     */
+
+    /**
+     * The operation was canceled because the biometric sensor is unavailable. This may happen when
+     * the user is switched, the device is locked, or another pending operation prevents it.
+     * 
+     *
+     ERROR_CANCELED = 5;
+     * 
+     */
+
+    /**
+     * The operation was canceled because the API is locked out due to too many attempts. This
+     * occurs after 5 failed attempts, and lasts for 30 seconds.
+     * 
+     *
+     ERROR_LOCKOUT = 7;
+     * 
+     */
+
+    /**
+     * The operation failed due to a vendor-specific error.
+     *
+     * <p>This error code may be used by hardware vendors to extend this list to cover errors that
+     * don't fall under one of the other predefined categories. Vendors are responsible for
+     * providing the strings for these errors.
+     *
+     * <p>These messages are typically reserved for internal operations such as enrollment but may
+     * be used to express any error that is not otherwise covered. In this case, applications are
+     * expected to show the error message, but they are advised not to rely on the message ID, since
+     * this may vary by vendor and device.
+     * 
+     *
+     ERROR_VENDOR = 8;
+     * 
+     */
+
+    /**
+     * The operation was canceled because {@link #ERROR_LOCKOUT} occurred too many times. Biometric
+     * authentication is disabled until the user unlocks with their device credential (i.e. PIN,
+     * pattern, or password).
+     * 
+     *
+     ERROR_LOCKOUT_PERMANENT = 9;
+     * 
+     */
+
+    /**
+     * The user canceled the operation.
+     *
+     * <p>Upon receiving this, applications should use alternate authentication, such as a password.
+     * The application should also provide the user a way of returning to biometric authentication,
+     * such as a button.
+     * 
+     *
+     ERROR_USER_CANCELED = 10;
+     * 
+     */
+
+    /**
+     * The user does not have any biometrics enrolled.
+     * Note: Optionally when this error is returned, client might be able to use
+     * the method "BrownieThunk_RecommendAddingBiometrics", to recommend the user
+     * adding a biometric.
+     * IMPORTANT: Only works on SDK version 30+ and its very affected by 
+     * fragmentation, some vendors don't even launch it)
+     * 
+     *
+     ERROR_NO_BIOMETRICS = 11;
+     * 
+     */
+
+    /**
+     * The device does not have the required authentication hardware.
+     * 
+     *
+     ERROR_HW_NOT_PRESENT = 12;
+     * 
+     */
+
+    /**
+     * The user pressed the negative button.
+     * 
+     *
+     ERROR_NEGATIVE_BUTTON = 13;
+     * 
+     */
+
+    /**
+     * The device does not have pin, pattern, or password set up.
+     * 
+     * 
+     * ERROR_NO_DEVICE_CREDENTIAL = 14;
+     */
+
+    /**
+     * A security vulnerability has been discovered with one or more hardware sensors. The
+     * affected sensor(s) are unavailable until a security update has addressed the issue.
+     * 
+     * ERROR_SECURITY_UPDATE_REQUIRED = 15;
+     */
+
+    /**
+     * Generic error, catch all/exceptions/unknown flows "onAuthenticationFailed"...
+     * 
+     * 
+     * ERROR_SECURITY_GENERIC_1 = 16;
+     */
+
+    /**
+     * Generic error, catch all/exceptions/unknown flows "BiometricPrompt.PromptInfo.Builder"...
+     *
+     *
+     * ERROR_SECURITY_GENERIC_2 = 17;
+     */
+
+## Example - How to use it
+
+First make sure you are *ready to start receiving the biometrics result related events* as follows (this code can be added on any class):
+
+    #include "BrowniePubsub.h"
+    //...
+    //Register to start listening updates...
+    BrowniePubsub* browniePubsub = BrowniePubsub::getInstance();
+    browniePubsub->onBiometricsErrorResult.AddUObject(this, &UYourComponent::onBiometricsErrorResult);
+	browniePubsub->onBiometricsSuccessResult.AddUObject(this, &UYourComponent::onBiometricsSuccessResult);
+  
+    //...
+    //...
+    //This function will be called every time there is an error from user input or device limitations...
+    void UYourComponent::onBiometricsErrorResult(int errorCode) { 
+        //Handle the errors as you wish, error 10 is probably the most commonly used (user canceled verification)
+    }
+    //...
+    //This function will be called after the user successfully identified him self with one of the 
+    //methods available on the device (e.g Pin/Password/Fingerprint/Face recognition/etc)...
+    void UYourComponent::onBiometricsSuccessResult(int result) {
+	    //If you care what method was used for authentication, validate here, otherwise you can just go on
+        //totally sure that the user introduced the right credentials on this device...
+	}
+
+
+After enabling the capability in Brownie's Plugin Settings screen, all you need to do to ***ask for user verification*** is calling the function below:
+
+    #if PLATFORM_ANDROID
+	    extern void BrownieThunkCpp_StartBiometrics(FString title, FString subtitle);
+	    BrownieThunkCpp_StartBiometrics(FString(TEXT("Here goes the title")), FString(TEXT("Here goes the subtitle")));
+    #endif	
+
+
+Just by adding the code above anywhere you want in your project, you would be able to verify that the user is authorized on that device, the process will find the best match for Biometric Verification and will pop up a dialog asking for ( Pin / Password / Fingerprint / FaceRecognition) verification and only if properly authenticated, the "biometric success" event will be fired.
+
+
+# In App Update
+This capability allows you to pop up a Google Play Screen that would start the App Update flow from your own app. This should happen only if there is a newer version of your app in Google Play.
+
+## Documentation
+**Popup the In App Update - Google Play screen**
+
+    void BrownieThunkCpp_InAppUpdate()
+
+**Register for In App Update Failed Events**
+
+*This method gets executed based on the actions taken by the user while updating the app*
+
+    void UYourComponent::onInAppUpdateErrorResult(int errorCode) 
+
+*These are the possible errorCodes that the In App Update logic might return:*
+
+    /**
+     *
+     * Possible Error Codes:
+     *
+     * RESULT_CANCELED -> 0: The user denied or canceled the update.
+     *
+     * RESULT_IN_APP_UPDATE_FAILED -> 1: The flow failed either during the user confirmation, the download, or the installation.
+     */
+
+## Example - How to use it
+
+First make sure you are *ready to start receiving the In App Update result related events* as follows (this code can be added on any class):
+
+    #include "BrowniePubsub.h"
+    //...
+    //Register to start listening updates...
+    BrowniePubsub* browniePubsub = BrowniePubsub::getInstance();
+    browniePubsub->onInAppUpdateErrorResult.AddUObject(this, &UYourComponent::onInAppUpdateErrorResult);
+  
+    //...
+    //...
+    //This function will be called every time there is an error from In App Update flow...
+    void UYourComponent::onInAppUpdateErrorResult(int errorCode) { 
+        //Handle the errors as you wish...
+    }
+
+
+After enabling the capability in Brownie's Plugin Settings screen, all you need to do to ***show In App Update screen*** is calling the function below:
+
+    #if PLATFORM_ANDROID
+	    extern void BrownieThunkCpp_InAppUpdate();
+	    BrownieThunkCpp_InAppUpdate();
+    #endif	
+
+
+Just by adding the code above anywhere you want in your project, you would be able to start the In App Update flow...
+
 
 # Show Toasts
 This capability displays a Toast Message on Android in a very simple manner.
@@ -421,7 +760,7 @@ This capability launches the Dialer of the device with a phone number already pr
     int BrownieThunkCpp_StartPhoneCall(FString phoneNumber)
 
 **Phone Call Permission Granted**
-*This method gets executed only if the permission has been explicitly granted by the user, following calls for the action will not trigger this event, the action will be taken directly(requires registering to the event first).*
+*This method lets you know whther if the permission was granted by the user or not, if granted, following calls for the action will not trigger this event, the action will be taken directly(requires registering to the event first).*
 
     void UYourComponent::onPhoneCallPermissionGranted(bool granted)
 
@@ -452,12 +791,41 @@ Now that our code is ready to listen for permission granted events, let's try to
 
 Just with the code above we can start a phone call. 
 
+
+# Share Text
+This capability allows you to natively share any text to one of the elegible apps in the device.
+
+## Documentation
+**Sharing Text**
+
+    /**
+     Params:
+     FString textToShare,
+     */
+    void BrownieThunkCpp_ShareText(FString textToShare)
+            
+
+## Example - How to use it
+
+After enabling the capability in Brownie's Plugin Settings screen, all you need to do to ***share any text*** is this:
+
+	FString textToShare = MessageTxt->GetText().ToString();
+
+    #if PLATFORM_ANDROID
+	    extern void BrownieThunkCpp_ShareText(FString textToShare);
+	    BrownieThunkCpp_ShareText(textToShare);
+    #endif	
+
+Just by adding the code above anywhere you want in your project you would be able to share any text html/json/plain/etc.
+
 # List of all the Events fired by the library
     FBrownieLocationPermissionGranted onLocationPermissionGranted;
     FBrownieOnLocationUpdate onLocationUpdate;
     FBrownieOnTakeScreenshotFinished onTakeScreenshotFinished;
     FBrownieOnTextToSpeechInitFinished onTextToSpeechInitFinished;
     FBrowniePhoneCallPermissionGranted onPhoneCallPermissionGranted;
+    FBrownieBiometricsErrorResult onBiometricsErrorResult;
+    FBrownieBiometricsSuccessResult onBiometricsSuccessResult;
 
 
 
