@@ -826,6 +826,7 @@ Just by adding the code above anywhere you want in your project you would be abl
     FBrowniePhoneCallPermissionGranted onPhoneCallPermissionGranted;
     FBrownieBiometricsErrorResult onBiometricsErrorResult;
     FBrownieBiometricsSuccessResult onBiometricsSuccessResult;
+    FBrownieInAppUpdateErrorResult onInAppUpdateErrorResult;
 
 
 
